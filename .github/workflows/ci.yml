@@ -25,31 +25,34 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 8
-          run_install: |
-            - args: [--frozen-lockfile]
-          standalone: true
+          run_install: false
       
       - name: Install dependencies with frozen lockfile
         run: pnpm install --frozen-lockfile
         continue-on-error: true
       
-      - name: Fix patch mismatch
+      - name: Debug patch issue
         if: failure()
         run: |
-          echo "Fixing patch mismatch..."
-          # Remove invalid patches
-          jq 'del(.patchedDependencies["@jupyterlab/codeeditor"]) | del(.patchedDependencies["@jupyterlab/shared-models"])' package.json > package_temp.json
-          mv package_temp.json package.json
-          pnpm install --no-frozen-lockfile
+          echo "Debugging patch mismatch..."
+          # Check if patch files exist
+          if [[ ! -f patches/@jupyterlab+codeeditor+3.5.2.patch ]]; then
+            echo "Patch file for @jupyterlab/codeeditor is missing!"
+            exit 1
+          fi
+          if [[ ! -f patches/@jupyterlab+shared-models+3.5.2.patch ]]; then
+            echo "Patch file for @jupyterlab/shared-models is missing!"
+            exit 1
+          fi
+          
+          # Verify dependency versions
+          pnpm list --depth 0 | grep '@jupyterlab/codeeditor@3.5.2' || echo "@jupyterlab/codeeditor version mismatch!"
+          pnpm list --depth 0 | grep '@jupyterlab/shared-models@3.5.2' || echo "@jupyterlab/shared-models version mismatch!"
 
-      - name: Commit updated package.json and lockfile
-        if: success()
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add package.json pnpm-lock.yaml
-          git commit -m "fix: resolve patch mismatch"
-          git push
+          # Attempt to reapply patches
+          pnpm patch-apply patches/@jupyterlab+codeeditor+3.5.2.patch
+          pnpm patch-apply patches/@jupyterlab+shared-models+3.5.2.patch
+          pnpm install --no-frozen-lockfile
       
       - name: Run pre-commit hooks
         uses: pre-commit/action@v3.0.0
