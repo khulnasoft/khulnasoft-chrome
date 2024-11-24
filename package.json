@@ -51,7 +51,7 @@
     "@bufbuild/protoc-gen-es": "1.9.0",
     "@connectrpc/protoc-gen-connect-es": "1.4.0",
     "@jupyterlab/application": "^3.5.2",
-    "@jupyterlab/codeeditor": "^3.5.3",
+    "@jupyterlab/codeeditor": "^3.5.2",
     "@jupyterlab/codemirror": "^3.5.2",
     "@jupyterlab/docmanager": "^3.5.2",
     "@jupyterlab/fileeditor": "^3.5.2",
@@ -92,5 +92,11 @@
     "webpack-dev-server": "^4.13.3",
     "webpack-merge": "^5.8.0",
     "yjs": "^13.6.8"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@jupyterlab/codeeditor@3.5.2": "patches/@jupyterlab+codeeditor+3.5.2.patch",
+      "@jupyterlab/shared-models@3.5.2": "patches/@jupyterlab+shared-models+3.5.2.patch"
+    }
   }
 }
