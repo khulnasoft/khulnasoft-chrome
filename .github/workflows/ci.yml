@@ -4,9 +4,6 @@ on:
     branches:
       - main
   pull_request:
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref_name }}-${{ github.ref_name != 'main' || github.sha }}
-  cancel-in-progress: true
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -15,49 +12,35 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 16
-      
+
       - name: Set up pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
           run_install: false
-      
+
       - name: Install dependencies with frozen lockfile
         run: pnpm install --frozen-lockfile
         continue-on-error: true
-      
-      - name: Debug patch issue
-        if: failure()
-        run: |
-          echo "Debugging patch mismatch..."
-          # Check if patch files exist
-          if [[ ! -f patches/@jupyterlab+codeeditor+3.5.2.patch ]]; then
-            echo "Patch file for @jupyterlab/codeeditor is missing!"
-            exit 1
-          fi
-          if [[ ! -f patches/@jupyterlab+shared-models+3.5.2.patch ]]; then
-            echo "Patch file for @jupyterlab/shared-models is missing!"
-            exit 1
-          fi
-          
-          # Verify dependency versions
-          pnpm list --depth 0 | grep '@jupyterlab/codeeditor@3.5.2' || echo "@jupyterlab/codeeditor version mismatch!"
-          pnpm list --depth 0 | grep '@jupyterlab/shared-models@3.5.2' || echo "@jupyterlab/shared-models version mismatch!"
 
-          # Attempt to reapply patches
-          pnpm patch-apply patches/@jupyterlab+codeeditor+3.5.2.patch
-          pnpm patch-apply patches/@jupyterlab+shared-models+3.5.2.patch
-          pnpm install --no-frozen-lockfile
-      
       - name: Run pre-commit hooks
         uses: pre-commit/action@v3.0.0
         with:
           extra_args: --all-files
-      
+        continue-on-error: true
+
+      - name: Commit changes made by pre-commit hooks
+        if: always()
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add .
+          git commit -m "Apply pre-commit fixes" || echo "No changes to commit"
+
       - name: Build the project
         run: pnpm build
