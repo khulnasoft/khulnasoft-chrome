@@ -1,0 +1,173 @@
+// Copyright khulnasoft, Inc.
+
+syntax = "proto3";
+
+package exa.language_server_pb;
+
+import "exa/khulnasoft_common_pb/khulnasoft_common.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/khulnasoft/khulnasoft-release/exa/language_server_pb";
+
+service LanguageServerService {
+  rpc GetCompletions(GetCompletionsRequest) returns (GetCompletionsResponse) {}
+  rpc AcceptCompletion(AcceptCompletionRequest) returns (AcceptCompletionResponse) {}
+  rpc GetAuthToken(GetAuthTokenRequest) returns (GetAuthTokenResponse) {}
+}
+
+// Next ID: 9, Previous field: disable_cache.
+message GetCompletionsRequest {
+  khulnasoft_common_pb.Metadata metadata = 1 [(validate.rules).message.required = true];
+  Document document = 2 [(validate.rules).message.required = true];
+  khulnasoft_common_pb.EditorOptions editor_options = 3 [(validate.rules).message.required = true];
+  repeated Document other_documents = 5;
+  ExperimentConfig experiment_config = 7;
+
+  string model_name = 10;
+}
+
+// Next ID: 5, Previous field: latency_info.
+message GetCompletionsResponse {
+  State state = 1;
+  repeated CompletionItem completion_items = 2;
+}
+
+// Next ID: 3, Previous field: completion_id.
+message AcceptCompletionRequest {
+  khulnasoft_common_pb.Metadata metadata = 1 [(validate.rules).message.required = true];
+  string completion_id = 2;
+}
+
+// Next ID: 1, Previous field: N/A.
+message AcceptCompletionResponse {}
+
+// Next ID: 1, Previous field: N/A.
+message GetAuthTokenRequest {}
+
+// Next ID: 3, Previous field: uuid.
+message GetAuthTokenResponse {
+  string auth_token = 1;
+  string uuid = 2;
+}
+
+/*****************************************************************************/
+/* Helper Messages                                                           */
+/*****************************************************************************/
+
+message DocumentPosition {
+  // 0-indexed. Measured in UTF-8 bytes.
+  uint64 row = 1;
+  // 0-indexed. Measured in UTF-8 bytes.
+  uint64 col = 2;
+}
+
+// Next ID: 9, Previous field: cursor_position.
+message Document {
+  // OS specific separators.
+  string absolute_path_migrate_me_to_uri = 1 [deprecated = true];
+  string absolute_uri = 12;
+  // Path relative to the root of the workspace. Slash separated.
+  // Leave empty if the document is not in the workspace.
+  string relative_path_migrate_me_to_workspace_uri = 2 [deprecated = true];
+  string workspace_uri = 13;
+  string text = 3;
+  // Language ID provided by the editor.
+  string editor_language = 4 [(validate.rules).string.min_len = 1];
+  // Language enum standardized across editors.
+  khulnasoft_common_pb.Language language = 5;
+  // Measured in number of UTF-8 bytes.
+  uint64 cursor_offset = 6;
+  // May be present instead of cursor_offset.
+  DocumentPosition cursor_position = 8;
+  // \n or \r\n, if known.
+  string line_ending = 7 [(validate.rules).string = {
+    in: [
+      "",
+      "\n",
+      "\r\n"
+    ]
+  }];
+
+  // These fields are not used by the chrome extension.
+  Range visible_range = 9;
+  bool is_cutoff_start = 10;
+  bool is_cutoff_end = 11;
+  int32 lines_cutoff_start = 14;
+  int32 lines_cutoff_end = 15;
+}
+
+message ExperimentConfig {
+  repeated khulnasoft_common_pb.ExperimentKey force_enable_experiments = 1 [(validate.rules).repeated.unique = true];
+}
+
+enum KhulnasoftState {
+  KHULNASOFT_STATE_UNSPECIFIED = 0;
+  KHULNASOFT_STATE_INACTIVE = 1;
+  KHULNASOFT_STATE_PROCESSING = 2;
+  KHULNASOFT_STATE_SUCCESS = 3;
+  KHULNASOFT_STATE_WARNING = 4;
+  KHULNASOFT_STATE_ERROR = 5;
+}
+
+// Next ID: 3, Previous field: message.
+message State {
+  KhulnasoftState state = 1;
+  string message = 2;
+}
+
+enum LineType {
+  LINE_TYPE_UNSPECIFIED = 0;
+  LINE_TYPE_SINGLE = 1;
+  LINE_TYPE_MULTI = 2;
+}
+
+// Next ID: 5, Previous field: end_position.
+message Range {
+  uint64 start_offset = 1;
+  uint64 end_offset = 2;
+  DocumentPosition start_position = 3;
+  DocumentPosition end_position = 4;
+}
+
+message Suffix {
+  // Text to insert after the cursor when accepting the completion.
+  string text = 1;
+  // Cursor position delta (as signed offset) from the end of the inserted
+  // completion (including the suffix).
+  int64 delta_cursor_offset = 2;
+}
+
+enum CompletionPartType {
+  COMPLETION_PART_TYPE_UNSPECIFIED = 0;
+  // Single-line completion parts that appear within an existing line of text.
+  COMPLETION_PART_TYPE_INLINE = 1;
+  // Possibly multi-line completion parts that appear below an existing line of text.
+  COMPLETION_PART_TYPE_BLOCK = 2;
+  // Like COMPLETION_PART_TYPE_INLINE, but overwrites the existing text.
+  COMPLETION_PART_TYPE_INLINE_MASK = 3;
+}
+
+// Represents a contiguous part of the completion text that is not
+// already in the document.
+// Next ID: 4, Previous field: prefix.
+message CompletionPart {
+  string text = 1;
+  // Offset in the original document where the part starts. For block
+  // parts, this is always the end of the line before the block.
+  uint64 offset = 2;
+  CompletionPartType type = 3;
+  // The section of the original line that came before this part. Only valid for
+  // COMPLETION_PART_TYPE_INLINE.
+  string prefix = 4;
+  // In the case of COMPLETION_PART_TYPE_BLOCK, represents the line it is below.
+  uint64 line = 5;
+}
+
+// Next ID: 9, Previous field: completion_parts.
+message CompletionItem {
+  khulnasoft_common_pb.Completion completion = 1;
+  Suffix suffix = 5;
+  Range range = 2;
+  khulnasoft_common_pb.CompletionSource source = 3;
+  repeated CompletionPart completion_parts = 8;
+}

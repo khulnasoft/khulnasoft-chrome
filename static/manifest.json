@@ -1,0 +1,49 @@
+{
+  "name": "Khulnasoft: AI Code Autocompletion on all IDEs",
+  "description": "Your modern coding superpower. Get code completions in Colab and more.",
+  "version": "1.26.3",
+  "manifest_version": 3,
+  "background": {
+    "service_worker": "serviceWorker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["khulnasoft.css"],
+      "js": ["contentScript.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["script.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "permissions": ["storage"],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false,
+    "browser_style": true
+  },
+  "action": {
+    "default_title": "Khulnasoft",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "/icons/16/khulnasoft_square_logo.png",
+      "32": "/icons/32/khulnasoft_square_logo.png",
+      "48": "/icons/48/khulnasoft_square_logo.png",
+      "128": "/icons/128/khulnasoft_square_logo.png"
+    }
+  },
+  "icons": {
+    "16": "/icons/16/khulnasoft_square_logo.png",
+    "32": "/icons/32/khulnasoft_square_logo.png",
+    "48": "/icons/48/khulnasoft_square_logo.png",
+    "128": "/icons/128/khulnasoft_square_logo.png"
+  },
+  "externally_connectable": {
+    "matches": ["<all_urls>"]
+  }
+}
