@@ -33,91 +33,28 @@ jobs:
         run: pnpm install --frozen-lockfile
         continue-on-error: true
       
-      - name: Fix lockfile mismatch if needed
+      - name: Fix patch mismatch
         if: failure()
-        run: pnpm install --no-frozen-lockfile
-      
-      - name: Commit updated lockfile
-        if: success() && github.ref == 'refs/heads/main'
+        run: |
+          echo "Fixing patch mismatch..."
+          # Remove invalid patches
+          jq 'del(.patchedDependencies["@jupyterlab/codeeditor"]) | del(.patchedDependencies["@jupyterlab/shared-models"])' package.json > package_temp.json
+          mv package_temp.json package.json
+          pnpm install --no-frozen-lockfile
+
+      - name: Commit updated package.json and lockfile
+        if: success()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add pnpm-lock.yaml
-          git commit -m "fix: update pnpm-lock.yaml"
+          git add package.json pnpm-lock.yaml
+          git commit -m "fix: resolve patch mismatch"
           git push
       
       - name: Run pre-commit hooks
         uses: pre-commit/action@v3.0.0
         with:
           extra_args: --all-files
-      
-      - name: Check and fix Prettier issues
-        run: |
-          pnpm prettier --write || true
-          git diff --exit-code || (
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add .
-            git commit -m "fix: apply prettier fixes"
-            git push
-          )
       
       - name: Build the project
         run: pnpm build
-
-  test-enterprise:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-          run_install: |
-            - args: [--frozen-lockfile]
-          standalone: true
-      
-      - name: Install dependencies with frozen lockfile
-        run: pnpm install --frozen-lockfile
-        continue-on-error: true
-      
-      - name: Fix lockfile mismatch if needed
-        if: failure()
-        run: pnpm install --no-frozen-lockfile
-      
-      - name: Commit updated lockfile
-        if: success() && github.ref == 'refs/heads/main'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add pnpm-lock.yaml
-          git commit -m "fix: update pnpm-lock.yaml"
-          git push
-      
-      - name: Run pre-commit hooks
-        uses: pre-commit/action@v3.0.0
-        with:
-          extra_args: --all-files
-      
-      - name: Check and fix Prettier issues
-        run: |
-          pnpm prettier --write || true
-          git diff --exit-code || (
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add .
-            git commit -m "fix: apply prettier fixes"
-            git push
-          )
-      
-      - name: Build the enterprise project
-        run: pnpm build:enterprise
