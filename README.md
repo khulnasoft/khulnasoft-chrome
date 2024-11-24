@@ -1,6 +1,3 @@
-<p align="center">
-  <img width="300" alt="Khulnasoft" src="khulnasoft.svg"/>
-</p>
 # khulnasoft-chrome
 
 [![Discord](https://img.shields.io/discord/1027685395649015980?label=community&color=5865F2&logo=discord&logoColor=FFFFFF)](https://discord.gg/3XFf78nAx5)
