@@ -7,7 +7,7 @@ package exa.language_server_pb;
 import "exa/khulnasoft_common_pb/khulnasoft_common.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/khulnasoft/khulnasoft-release/exa/language_server_pb";
+option go_package = "github.com/khulnasoft/khulnasoft-chrome/exa/language_server_pb";
 
 service LanguageServerService {
   rpc GetCompletions(GetCompletionsRequest) returns (GetCompletionsResponse) {}

@@ -8,7 +8,7 @@ import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/khulnasoft/khulnasoft-release/exa/khulnasoft_common_pb";
+option go_package = "github.com/khulnasoft/khulnasoft-chrome/exa/khulnasoft_common_pb";
 
 enum ExperimentKey {
   UNSPECIFIED = 0;

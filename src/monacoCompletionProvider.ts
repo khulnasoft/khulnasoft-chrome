@@ -123,7 +123,7 @@ function getValueAndStartOffset(
   const indexofNewline = originalValue.indexOf('\n');
   const indexOfSecondLine = indexofNewline === -1 ? originalValue.length : indexofNewline + 1;
   // TODO(prem): This is going to let completions start at the end of %python lines, etc.
-  // https://github.com/khulnasoft/khulnasoft-release/pull/3652#discussion_r1102165558
+  // https://github.com/khulnasoft/khulnasoft-chrome/pull/3652#discussion_r1102165558
   return { value: originalValue.substring(indexOfSecondLine), utf16Offset: indexOfSecondLine };
 }
 
