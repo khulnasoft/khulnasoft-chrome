@@ -1,8 +1,7 @@
 <p align="center">
   <img width="300" alt="Khulnasoft" src="khulnasoft.svg"/>
 </p>
-
----
+# khulnasoft-chrome
 
 [![Discord](https://img.shields.io/discord/1027685395649015980?label=community&color=5865F2&logo=discord&logoColor=FFFFFF)](https://discord.gg/3XFf78nAx5)
 [![Twitter Follow](https://img.shields.io/badge/style--blue?style=social&logo=twitter&label=Follow%20%40khulnasoftdev)](https://twitter.com/intent/follow?screen_name=khulnasoftdev)
@@ -13,8 +12,6 @@
 [![JetBrains](https://img.shields.io/jetbrains/plugin/d/20540?label=JetBrains)](https://plugins.jetbrains.com/plugin/20540-khulnasoft/)
 [![Open VSX](https://img.shields.io/open-vsx/dt/Khulnasoft/khulnasoft?label=Open%20VSX)](https://open-vsx.org/extension/Khulnasoft/khulnasoft)
 [![Google Chrome](https://img.shields.io/chrome-web-store/users/hobjkcpmjhlegmobgonaagepfckjkceh?label=Google%20Chrome&logo=googlechrome&logoColor=FFFFFF)](https://chrome.google.com/webstore/detail/khulnasoft/hobjkcpmjhlegmobgonaagepfckjkceh)
-
-# khulnasoft-chrome
 
 _Free, ultrafast code autocomplete for Chrome_
 
