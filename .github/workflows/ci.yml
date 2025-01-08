@@ -22,7 +22,7 @@ jobs:
         with:
           version: 8
           run_install: |
-            - args: [--no-frozen-lockfile]
+            - args: [--frozen-lockfile]
           standalone: true
       - uses: pre-commit/action@v3.0.0
         with:
