@@ -1,7 +1,7 @@
 # khulnasoft-chrome
 
 [![Discord](https://img.shields.io/discord/1027685395649015980?label=community&color=5865F2&logo=discord&logoColor=FFFFFF)](https://discord.gg/3XFf78nAx5)
-[![Twitter Follow](https://img.shields.io/badge/style--blue?style=social&logo=twitter&label=Follow%20%40khulnasoftdev)](https://twitter.com/intent/follow?screen_name=khulnasoftdev)
+[![Twitter Follow](https://img.shields.io/badge/style--blue?style=social&logo=twitter&label=Follow%20%40khulnasoft)](https://twitter.com/intent/follow?screen_name=khulnasoft)
 ![License](https://img.shields.io/github/license/khulnasoft/khulnasoft-chrome)
 [![Docs](https://img.shields.io/badge/Khulnasoft%20Docs-09B6A2)](https://docs.khulnasoft.com)
 
