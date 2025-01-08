@@ -2,7 +2,7 @@ import { IDisposable } from '@lumino/disposable';
 import type CodeMirror from 'codemirror';
 
 import { editorLanguage, language } from './codemirrorLanguages';
-import { KHULNASOFT_DEBUG, IdeInfo, KeyCombination, LanguageServerClient } from './common';
+import { IdeInfo, KHULNASOFT_DEBUG, KeyCombination, LanguageServerClient } from './common';
 import { TextAndOffsets, computeTextAndOffsets } from './notebook';
 import { numUtf8BytesToNumCodeUnits } from './utf';
 import { EditorOptions } from '../proto/exa/khulnasoft_common_pb/khulnasoft_common_pb';
